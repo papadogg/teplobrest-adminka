@@ -1,0 +1,20 @@
+.sidebar {
+  background-color: lightgray;
+  padding: 10px;
+
+  li > ul {
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 10px 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
