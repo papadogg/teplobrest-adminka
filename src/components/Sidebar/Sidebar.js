@@ -14,12 +14,24 @@ const Sidebar = () => {
           <Link to="/">Главная</Link>
         </li>
         <li>
-          <Link to="/products">Продукты</Link>
+          <Link to="/catalog">Каталог</Link>
           <ul>
             <li>
-              <Link to="/products/new">Новый</Link>
+              <Link to="/products/new">Добавить товар</Link>
             </li>
           </ul>
+        </li>
+        <li>
+          <Link to="/brands">Производители</Link>
+        </li>
+        <li>
+          <Link to="/categories">Категории</Link>
+        </li>
+        <li>
+          <Link to="/attributes">Характеристики</Link>
+        </li>
+        <li>
+          <Link to="/orders">Заказы</Link>
         </li>
       </ul>
     </aside>

@@ -1,0 +1,9 @@
+#root .product-item {
+  &__image-list {
+    display: flex;
+    align-items: center;
+    img {
+      margin: 10px;
+    }
+  }
+}

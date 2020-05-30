@@ -1,0 +1,15 @@
+.brand-list {
+  li {
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__add-field {
+    padding: 50px;
+    span {
+      margin-right: 20px;
+    }
+  }
+}

@@ -11,7 +11,6 @@ const SignIn = ({ history }) => {
 
   const [signIn, { loading }] = useMutation(SIGNIN, {
     onCompleted: (data) => {
-      console.log(data);
       const {
         token,
         user: { role },

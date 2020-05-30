@@ -1,0 +1,11 @@
+#root .product-list {
+  &__with-image {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  &__text {
+    width: 150px;
+  }
+}

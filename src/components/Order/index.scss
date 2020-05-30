@@ -1,0 +1,15 @@
+.order-list__item {
+  margin: 20px 0;
+  padding: 20px;
+  border-bottom: 1px solid gray;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  &-processed {
+    background-color: rgba($color: green, $alpha: 0.1);
+  }
+
+  &-unprocessed {
+    background-color: rgba($color: red, $alpha: 0.1);
+  }
+}
