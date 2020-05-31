@@ -1,11 +1,12 @@
 import React from 'react';
+import { endPoint } from '../../config';
 
 const ImageWidget = ({ setImages }) => {
   const onChange = async (e) => {
     const { files } = e.target;
     const formData = new FormData();
     Array.from(files).forEach((file) => formData.append('images', file));
-    const response = await fetch('http://localhost:4000/upload', {
+    const response = await fetch(`${endPoint}upload`, {
       method: 'POST',
       headers: {
         authorization: localStorage.getItem('token'),
@@ -17,6 +18,7 @@ const ImageWidget = ({ setImages }) => {
       setImages({
         id: Math.random(),
         small: img.small,
+        medium: img.medium,
         big: img.big,
       });
     });

@@ -6,9 +6,11 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { setContext } from 'apollo-link-context';
 
+import App from './App';
+import { endPoint } from './config';
+
 import 'semantic-ui-css/semantic.min.css';
 import './index.scss';
-import App from './App';
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
@@ -22,7 +24,7 @@ const authLink = setContext((_, { headers }) => {
 
 const cache = new InMemoryCache();
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/api',
+  uri: `${endPoint}graphql`,
 });
 
 const client = new ApolloClient({
