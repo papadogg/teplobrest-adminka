@@ -3,19 +3,20 @@ import {
   Button,
   Form,
   Dropdown,
-  TextArea,
   Checkbox,
   Image,
   List,
   Icon,
+  Grid,
 } from 'semantic-ui-react';
 import { useMutation } from '@apollo/react-hooks';
 
 import BrandForm from '../../Brand/BrandForm';
 import AttributeForm from '../../Attribute/AttributeForm';
 import ImageWidget from '../../Image/ImageWidget';
-import AttributeItem from './AttributeItem';
+import AttributeItem from './VariableProductForm/AttributeItem';
 import CategoriesSelector from './CategoriesSelector';
+import Editor from './Editor';
 import { CREATE_PRODUCT, GET_PRODUCTS, UPDATE_PRODUCT } from '../../../query';
 import { transformOptions, transformAttributes } from './helpers';
 
@@ -24,7 +25,7 @@ const ProductForm = ({
   brandOptions = [],
   attributeOptions = [],
   history,
-  currentProduct,
+  currentProduct = {},
 }) => {
   const [error, setError] = useState('');
   const [name, setName] = useState(currentProduct.name || '');
@@ -37,10 +38,7 @@ const ProductForm = ({
   const [description, setDescription] = useState(
     currentProduct.description || ''
   );
-  const [seoTitle, setSeoTitle] = useState(currentProduct.seoTitle || '');
-  const [seoDescription, setSeoDescription] = useState(
-    currentProduct.seoDescription || ''
-  );
+
   const [availability, setAvailability] = useState(
     currentProduct.availability || true
   );
@@ -66,10 +64,12 @@ const ProductForm = ({
   };
 
   const addAttribute = () => {
+    const id = Math.random();
     setAttributes((prevState) => [
       ...prevState,
       {
-        key: Math.random(),
+        id,
+        key: id,
       },
     ]);
   };
@@ -103,6 +103,7 @@ const ProductForm = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
+
     const product = {
       id: currentProduct.id,
       name,
@@ -111,10 +112,8 @@ const ProductForm = ({
       price: Number(price),
       promoPrice: Number(promoPrice),
       description,
-      seoTitle,
-      seoDescription,
       availability,
-      images: images.map(({ big, small }) => ({ big, small })),
+      images: images.map(({ medium, small }) => ({ medium, small })),
       attributes: attributes.map(({ attribute, input }) => ({
         attribute,
         value: input,
@@ -125,11 +124,7 @@ const ProductForm = ({
       !name ||
       !categories[0] ||
       !brand ||
-      !price ||
-      !promoPrice ||
       !description ||
-      !seoTitle ||
-      !seoDescription ||
       !availability ||
       !images[0].small
     ) {
@@ -138,6 +133,21 @@ const ProductForm = ({
     }
 
     if (currentProduct.id) {
+      const newRelatedProducts = (currentProduct.relatedProducts || []).map(
+        (p) => ({
+          name: p.name,
+          slug: p.slug,
+          attribute: {
+            id: p.attribute.id,
+            name: p.attribute.name,
+            unit: p.attribute.unit,
+            value: p.attribute.value,
+          },
+        })
+      );
+
+      product.relatedProducts = newRelatedProducts;
+      product.oldSlug = currentProduct.slug;
       updateProduct({
         variables: {
           input: product,
@@ -153,145 +163,132 @@ const ProductForm = ({
   };
 
   return (
-    <Form onSubmit={onSubmit}>
-      <Form.Field>
-        <label>Название*</label>
-        <input
-          value={name}
-          placeholder="Название"
-          onChange={(e) => setName(e.target.value)}
-        />
-      </Form.Field>
-      <CategoriesSelector
-        categories={categories}
-        setCategories={setCategories}
-        categoryOptions={categoryOptions}
-      />
-      <Form.Field>
-        <label>Производитель*</label>
-        <div className="with-plus">
-          <Dropdown
-            placeholder="Производитель"
-            value={brand}
-            fluid
-            search
-            selection
-            options={transformOptions(brandOptions)}
-            onChange={(e, { value }) => setBrand(value)}
+    <Grid centered columns={2}>
+      <Grid.Column>
+        <Form onSubmit={onSubmit}>
+          <Form.Field>
+            <label>Название*</label>
+            <input
+              value={name}
+              placeholder="Название"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Form.Field>
+          <CategoriesSelector
+            categories={categories}
+            setCategories={setCategories}
+            categoryOptions={categoryOptions}
           />
-          <BrandForm />
-        </div>
-      </Form.Field>
-      <Form.Field>
-        <label>Цена*</label>
-        <input
-          value={price}
-          placeholder={0}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>Цена со скидкой*</label>
-        <input
-          value={promoPrice}
-          placeholder={0}
-          onChange={(e) => setPromoPrice(e.target.value)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>Описание*</label>
-        <TextArea
-          value={description}
-          placeholder="Описание"
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>SEO title*</label>
-        <input
-          value={seoTitle}
-          placeholder="SEO title"
-          onChange={(e) => setSeoTitle(e.target.value)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>SEO description*</label>
-        <TextArea
-          value={seoDescription}
-          placeholder="Описание"
-          onChange={(e) => setSeoDescription(e.target.value)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>Наличие*</label>
-        <Checkbox
-          checked={availability}
-          label="В наличии"
-          onChange={(e) => setAvailability(!availability)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <label>Главное изображение*</label>
-        {images.length > 0 && images[0].small && (
-          <div className="product-form__image-item">
-            <Image src={images[0].small} />
-            <Icon
-              name="delete"
-              size="big"
-              circular
-              inverted
-              link
-              onClick={deleteMainImage}
-            />
-          </div>
-        )}
-        <ImageWidget setImages={setMainImage} />
-      </Form.Field>
-      <Form.Field>
-        <label>Дополнительные изображения</label>
-        <List horizontal>
-          {images.slice(1).map((image) => (
-            <List.Item className="product-form__image-item" key={image.id}>
-              <Image src={image.small} />
-              <Icon
-                name="delete"
-                size="big"
-                circular
-                inverted
-                link
-                onClick={() => deleteImage(image.id)}
+          <Form.Field>
+            <label>Производитель*</label>
+            <div className="with-plus">
+              <Dropdown
+                placeholder="Производитель"
+                value={brand}
+                fluid
+                search
+                selection
+                options={transformOptions(brandOptions)}
+                onChange={(e, { value }) => setBrand(value)}
               />
-            </List.Item>
-          ))}
-        </List>
-        <ImageWidget setImages={updateImages} />
-      </Form.Field>
-      <Form.Field>
-        <div>
-          <label>Характеристики</label>
-          <AttributeForm />
-        </div>
-        {attributes.map((attribute) => {
-          return (
-            <AttributeItem
-              key={attribute.key}
-              attribute={attribute}
-              setAttributes={setAttributes}
-              options={transformOptions(attributeOptions)}
+              <BrandForm />
+            </div>
+          </Form.Field>
+          <Form.Field>
+            <label>Цена*</label>
+            <input
+              value={price}
+              placeholder={0}
+              onChange={(e) => setPrice(e.target.value)}
             />
-          );
-        })}
-        <Button type="button" onClick={addAttribute}>
-          Добавить
-        </Button>
-      </Form.Field>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <div className="product-form__create-btn">
-        <Button type="submit" loading={createLoading || updateLoading}>
-          Создать
-        </Button>
-      </div>
-    </Form>
+          </Form.Field>
+          <Form.Field>
+            <label>Цена со скидкой*</label>
+            <input
+              value={promoPrice}
+              placeholder={0}
+              onChange={(e) => setPromoPrice(e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Описание*</label>
+            <Editor
+              text={description}
+              onChange={(value) => setDescription(value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Наличие*</label>
+            <Checkbox
+              checked={availability}
+              label="В наличии"
+              onChange={(e) => setAvailability(!availability)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Главное изображение*</label>
+            {images.length > 0 && images[0].small && (
+              <div className="product-form__image-item">
+                <Image src={images[0].small} />
+                <Icon
+                  name="delete"
+                  size="big"
+                  circular
+                  inverted
+                  link
+                  onClick={deleteMainImage}
+                />
+              </div>
+            )}
+            <ImageWidget setImages={setMainImage} />
+          </Form.Field>
+          <Form.Field>
+            <label>Дополнительные изображения</label>
+            <List horizontal>
+              {images.slice(1).map((image) => (
+                <List.Item className="product-form__image-item" key={image.id}>
+                  <Image src={image.small} />
+                  <Icon
+                    name="delete"
+                    size="big"
+                    circular
+                    inverted
+                    link
+                    onClick={() => deleteImage(image.id)}
+                  />
+                </List.Item>
+              ))}
+            </List>
+            <ImageWidget setImages={updateImages} />
+          </Form.Field>
+          <Form.Field>
+            <div>
+              <label>Характеристики</label>
+              <AttributeForm />
+            </div>
+            {attributes.map((attribute) => {
+              return (
+                <AttributeItem
+                  attributes={attributes}
+                  attribute={attribute}
+                  setAttributes={setAttributes}
+                  options={transformOptions(attributeOptions)}
+                />
+              );
+            })}
+            <Button type="button" onClick={addAttribute}>
+              Добавить
+            </Button>
+          </Form.Field>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          <div className="product-form__create-btn">
+            <Button type="submit" loading={createLoading || updateLoading}>
+              Создать
+            </Button>
+          </div>
+        </Form>
+      </Grid.Column>
+    </Grid>
   );
 };
 

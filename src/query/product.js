@@ -18,12 +18,12 @@ export const CREATE_PRODUCT = gql`
       }
       price
       promoPrice
+      priceRub
+      promoPriceRub
       description
-      seoTitle
-      seoDescription
       availability
       images {
-        big
+        medium
         small
       }
       attributes {
@@ -57,12 +57,12 @@ export const UPDATE_PRODUCT = gql`
       }
       price
       promoPrice
+      priceRub
+      promoPriceRub
       description
-      seoTitle
-      seoDescription
       availability
       images {
-        big
+        medium
         small
       }
       attributes {
@@ -104,12 +104,12 @@ export const GET_PRODUCTS = gql`
         }
         price
         promoPrice
+        priceRub
+        promoPriceRub
         description
-        seoTitle
-        seoDescription
         availability
         images {
-          big
+          medium
           small
         }
         attributes {
@@ -120,6 +120,16 @@ export const GET_PRODUCTS = gql`
             unit
           }
           value
+        }
+        relatedProducts {
+          name
+          slug
+          attribute {
+            id
+            name
+            unit
+            value
+          }
         }
       }
       total
@@ -145,12 +155,12 @@ export const GET_PRODUCT = gql`
       }
       price
       promoPrice
+      priceRub
+      promoPriceRub
       description
-      seoTitle
-      seoDescription
       availability
       images {
-        big
+        medium
         small
       }
       attributes {
@@ -162,6 +172,22 @@ export const GET_PRODUCT = gql`
         }
         value
       }
+      relatedProducts {
+        name
+        slug
+        attribute {
+          id
+          name
+          unit
+          value
+        }
+      }
     }
+  }
+`;
+
+export const CREATE_MANY = gql`
+  mutation createMany($input: [ProductInput!]) {
+    createMany(input: $input)
   }
 `;

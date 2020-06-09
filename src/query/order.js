@@ -26,12 +26,12 @@ export const GET_ORDERS = gql`
           }
           price
           promoPrice
+          priceRub
+          promoPriceRub
           description
-          seoTitle
-          seoDescription
           availability
           images {
-            big
+            medium
             small
           }
           attributes {
@@ -78,12 +78,12 @@ export const GET_ORDER = gql`
           }
           price
           promoPrice
+          priceRub
+          promoPriceRub
           description
-          seoTitle
-          seoDescription
           availability
           images {
-            big
+            medium
             small
           }
           attributes {

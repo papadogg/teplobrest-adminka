@@ -1,0 +1,17 @@
+#root {
+  .VariableProductForm {
+    overflow-x: auto;
+  }
+
+  .VariableProductForm-menu {
+    > a {
+      background-color: antiquewhite;
+      max-width: 200px;
+      overflow: hidden;
+
+      &.active {
+        background-color: white;
+      }
+    }
+  }
+}

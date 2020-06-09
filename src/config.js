@@ -1,3 +1,6 @@
 module.exports = {
-  endPoint: 'https://api.teplobrest.by/',
+  endPoint:
+    process.env.NODE_ENV === 'production'
+      ? 'https://api.teplobrest.by/'
+      : 'http://localhost:4000/',
 };

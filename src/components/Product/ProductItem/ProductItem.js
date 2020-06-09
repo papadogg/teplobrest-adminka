@@ -11,6 +11,8 @@ const ProductItem = ({ match, location, history }) => {
   const { slug } = match.params;
 
   const { data, loading } = useQuery(GET_PRODUCT, {
+    fetchPolicy: 'network-only',
+
     variables: {
       slug,
     },
@@ -49,9 +51,9 @@ const ProductItem = ({ match, location, history }) => {
     brand,
     price,
     promoPrice,
+    priceRub,
+    promoPriceRub,
     description,
-    seoTitle,
-    seoDescription,
     availability,
     attributes,
   } = data.getProduct;
@@ -68,6 +70,7 @@ const ProductItem = ({ match, location, history }) => {
       <Header size="large">{name}</Header>
       <Link to={`/products/${slug}/edit`}>Редактировать</Link>
       <Button onClick={deleteHandler}>Удолить</Button>
+      <Link to={`/products/${slug}/copy`}>Копировать</Link>
       <div className="product-item__image-list">
         {images.map((image) => (
           <Image key={image.small} src={image.small} size="small" />
@@ -76,11 +79,14 @@ const ProductItem = ({ match, location, history }) => {
       <List>
         <List.Item>Категория: {categories[0].name}</List.Item>
         <List.Item>Производитель: {brand.name}</List.Item>
-        <List.Item>Цена: {price}</List.Item>
-        <List.Item>Цена со скидкой: {promoPrice}</List.Item>
-        <List.Item>Описание: {description}</List.Item>
-        <List.Item>SEO title: {seoTitle}</List.Item>
-        <List.Item>SEO description: {seoDescription}</List.Item>
+        <List.Item>Цена (евро): {price}</List.Item>
+        <List.Item>Цена со скидкой (евро): {promoPrice}</List.Item>
+        <List.Item>Цена (руб): {priceRub}</List.Item>
+        <List.Item>Цена со скидкой (руб): {promoPriceRub}</List.Item>
+        <List.Item>
+          Описание:{' '}
+          <div dangerouslySetInnerHTML={{ __html: description }}></div>
+        </List.Item>
         <List.Item>Наличие: {availability.toString()}</List.Item>
         <List.Item>
           Характеристики:

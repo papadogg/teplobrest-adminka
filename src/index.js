@@ -22,7 +22,9 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  dataIdFromObject: (o) => (o._id ? `${o.__typename}:${o._id}` : null),
+});
 const httpLink = new HttpLink({
   uri: `${endPoint}graphql`,
 });

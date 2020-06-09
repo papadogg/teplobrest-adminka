@@ -19,6 +19,11 @@ const Sidebar = () => {
             <li>
               <Link to="/products/new">Добавить товар</Link>
             </li>
+            <li>
+              <Link to="/products/new-variable">
+                Добавить вариабельный товар
+              </Link>
+            </li>
           </ul>
         </li>
         <li>

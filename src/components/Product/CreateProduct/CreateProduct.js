@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 
 import Layout from '../../Layout';
 import ProductForm from './ProductForm';
+import VariableProductForm from './VariableProductForm';
 import {
   GET_CATEGORIES,
   GET_BRANDS,
@@ -12,14 +13,20 @@ import {
 } from '../../../query';
 import './index.scss';
 
-const CreateProduct = ({ history, match }) => {
+const CreateProduct = ({ history, match, variable }) => {
   const { slug } = match.params;
 
-  const { data: product, loading: productLoading } = useQuery(GET_PRODUCT, {
-    variables: {
-      slug,
-    },
-  });
+  const { error, data: product, loading: productLoading } = useQuery(
+    GET_PRODUCT,
+    {
+      skip:
+        match.path === '/products/new' ||
+        match.path === '/products/new-variable',
+      variables: {
+        slug,
+      },
+    }
+  );
 
   const { data: categories, loading: categoryLoading } = useQuery(
     GET_CATEGORIES
@@ -31,11 +38,15 @@ const CreateProduct = ({ history, match }) => {
   );
 
   if (categoryLoading || brandLoading || attributesLoading || productLoading) {
-    return <div>Loading</div>;
+    return <Layout>Loading</Layout>;
+  }
+
+  if (error) {
+    return <Layout>No such product</Layout>;
   }
 
   const currentProduct =
-    match.path !== '/products/new'
+    match.path !== '/products/new' && match.path !== '/products/new-variable'
       ? product.getProduct
       : {
           categories: [],
@@ -44,18 +55,28 @@ const CreateProduct = ({ history, match }) => {
 
   return (
     <Layout>
-      <Grid centered columns={2}>
+      <Grid centered>
         <Grid.Column>
           <h2>{`${
             !currentProduct.id ? 'Создание' : 'Рекдактирование'
           } продукта`}</h2>
-          <ProductForm
-            categoryOptions={categories.getCategories}
-            brandOptions={brands.getBrands}
-            attributeOptions={attributes.getAttributes}
-            history={history}
-            currentProduct={currentProduct}
-          />
+          {!variable ? (
+            <ProductForm
+              categoryOptions={categories.getCategories}
+              brandOptions={brands.getBrands}
+              attributeOptions={attributes.getAttributes}
+              history={history}
+              currentProduct={currentProduct}
+            />
+          ) : (
+            <VariableProductForm
+              categoryOptions={categories.getCategories}
+              brandOptions={brands.getBrands}
+              attributeOptions={attributes.getAttributes}
+              history={history}
+              currentProduct={currentProduct}
+            />
+          )}
         </Grid.Column>
       </Grid>
     </Layout>

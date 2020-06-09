@@ -1,27 +1,31 @@
 import React from 'react';
 import { Dropdown, List, Icon, Input } from 'semantic-ui-react';
 
-const AttributeItem = ({ options, attribute, setAttributes }) => {
+const AttributeItem = ({ options, attributes, attribute, setAttributes }) => {
   const setAttribute = (value) => {
     const option = options.find((o) => o.id === value);
-    setAttributes((prevState) =>
-      prevState.map((a) => {
-        if (a.id === attribute.id) {
-          return {
-            id: value,
-            attribute: value,
-            key: option.key,
-            unit: option.unit,
-            input: a.input,
-          };
-        }
-        return a;
-      })
-    );
+
+    if (attributes.find((a) => a.id === value)) {
+      return;
+    }
+
+    const newValue = attributes.map((a) => {
+      if (a.id === attribute.id) {
+        return {
+          id: value,
+          attribute: value,
+          key: option.key,
+          unit: option.unit,
+          input: a.input,
+        };
+      }
+      return a;
+    });
+    setAttributes(newValue);
   };
   const setInput = (value) => {
-    setAttributes((prevState) =>
-      prevState.map((a) => {
+    setAttributes(
+      attributes.map((a) => {
         if (a.id === attribute.id) {
           return {
             ...a,
@@ -34,9 +38,7 @@ const AttributeItem = ({ options, attribute, setAttributes }) => {
   };
 
   const deleteAttribute = () => {
-    setAttributes((prevState) =>
-      prevState.filter((a) => a.key !== attribute.key)
-    );
+    setAttributes(attributes.filter((a) => a.key !== attribute.key));
   };
   return (
     <List.Item className="product-form__attribute-item">

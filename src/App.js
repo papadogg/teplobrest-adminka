@@ -51,8 +51,18 @@ const App = () => {
           <Route exact path="/catalog" component={ProductList} />
           <Route exact path="/catalog/:slug" component={ProductList} />
           <Route exact path="/products/new" component={CreateProduct} />
+          <Route
+            exact
+            path="/products/new-variable"
+            render={(props) => <CreateProduct {...props} variable />}
+          />
           <Route exact path="/products/:slug" component={ProductItem} />
           <Route exact path="/products/:slug/edit" component={CreateProduct} />
+          <Route
+            exact
+            path="/products/:slug/copy"
+            render={(props) => <CreateProduct {...props} variable />}
+          />
           <Route exact path="/brands" component={BrandList} />
           <Route exact path="/categories" component={CategoryList} />
           <Route exact path="/attributes" component={AttributeList} />

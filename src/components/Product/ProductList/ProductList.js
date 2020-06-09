@@ -92,6 +92,14 @@ const ProductList = (props) => {
                   </div>
                   <Image src={product.images[0].small} size="small" />
                 </div>
+                <div>
+                  <Link to={`/products/${product.slug}/copy`}>Копировать</Link>
+                </div>
+                <div>
+                  <Link to={`/products/${product.slug}/edit`}>
+                    Редактировать
+                  </Link>
+                </div>
               </Table.Cell>
               <Table.Cell>
                 <Link to={`/catalog/${product.categories[0].key}`}>
@@ -101,8 +109,12 @@ const ProductList = (props) => {
               <Table.Cell>{product.brand.name}</Table.Cell>
               <Table.Cell>
                 <div>
-                  <div>{product.price}</div>
-                  <div style={{ color: 'red ' }}>{product.promoPrice}</div>
+                  <div>{product.price} eur</div>
+                  <div>Со скидкой - {product.promoPrice} eur</div>
+                </div>
+                <div>
+                  <div>{product.priceRub} руб</div>
+                  <div>Со скидкой - {product.promoPriceRub} руб</div>
                 </div>
               </Table.Cell>
               <Table.Cell>
